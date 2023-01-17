@@ -5,6 +5,12 @@ from prestadores.models import Prestador
 
 # Model for cliente table
 class Demanda(models.Model):
+    id = models.IntegerField(
+        primary_key=True,
+        null=False,
+        blank=False,
+        auto_created=True
+    )
     tipo = models.CharField(
         max_length=50,
         null=False,
@@ -55,5 +61,8 @@ class Demanda(models.Model):
         null=True,
         blank=True
     )
+
+    def __str__(self):
+        return self.id
 
     objetos = models.Manager()

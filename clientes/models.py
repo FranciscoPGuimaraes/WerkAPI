@@ -36,6 +36,9 @@ class Cliente(models.Model):
         blank=False
     )
 
+    def __str__(self):
+        return self.nome
+
 
 # Model for Endereco table
 class Endereco(models.Model):
@@ -66,7 +69,6 @@ class Endereco(models.Model):
         blank=False
     )
     numero = models.IntegerField(
-        max_length=8,
         null=False,
         blank=False
     )
@@ -92,5 +94,8 @@ class Endereco(models.Model):
         null=True,
         blank=True
     )
+
+    def __str__(self):
+        return f'{self.rua}, {self.numero}'
 
     objetos = models.Manager()

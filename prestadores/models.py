@@ -41,4 +41,7 @@ class Prestador(models.Model):
     )
     cadastroValidade = models.BooleanField()
 
+    def __str__(self):
+        return self.nome
+
     objetos = models.Manager()

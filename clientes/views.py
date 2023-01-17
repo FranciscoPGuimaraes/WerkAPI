@@ -14,7 +14,7 @@ def Cliente_RUD(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':  # Cliente read (Ver o perfil)
-        serializer = ClienteSerializers(cliente, many=True)
+        serializer = ClienteSerializers(cliente)
         return Response(serializer.data)
     elif request.method == 'PUT':  # Cliente update (Atualizar o perfil)
         serializer = ClienteSerializers(Cliente, data=request.data)
@@ -27,6 +27,7 @@ def Cliente_RUD(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@api_view(['POST'])
 def Cliente_Create(request):
     if request.method == 'POST':  # Cliente create (Cadastro)
         serializer = ClienteSerializers(data=request.data)
@@ -35,3 +36,9 @@ def Cliente_Create(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['GET'])
+def ClientesALL(request):
+    cliente = Cliente.objects.all()
+    serializer = ClienteSerializers(cliente, many=True)
+    return Response(serializer.data)
