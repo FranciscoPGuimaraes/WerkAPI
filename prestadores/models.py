@@ -39,7 +39,7 @@ class Prestador(models.Model):
         null=False,
         blank=False
     )
-    cadastroValidade = models.BooleanField()
+    cadastroValidado = models.BooleanField()
 
     def __str__(self):
         return self.nome
