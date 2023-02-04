@@ -1,7 +1,10 @@
+"""
+Models from Prestador's app
+"""
 from django.db import models
 
 
-# Model for cliente table
+# Model for Prestador's table
 class Prestador(models.Model):
     nome = models.CharField(
         max_length=90,
@@ -44,4 +47,3 @@ class Prestador(models.Model):
     def __str__(self):
         return self.nome
 
-    objetos = models.Manager()

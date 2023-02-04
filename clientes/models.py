@@ -1,3 +1,6 @@
+"""
+Models from Cliente's app
+"""
 from django.db import models
 from prestadores.models import Prestador
 
@@ -98,4 +101,3 @@ class Endereco(models.Model):
     def __str__(self):
         return f'{self.rua}, {self.numero}'
 
-    objetos = models.Manager()

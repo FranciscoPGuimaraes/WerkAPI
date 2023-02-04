@@ -1,9 +1,12 @@
+"""
+Models from Demanda's app
+"""
 from django.db import models
 from clientes.models import Cliente
 from prestadores.models import Prestador
 
 
-# Model for cliente table
+# Model for Demanda table
 class Demanda(models.Model):
     id = models.IntegerField(
         primary_key=True,

@@ -1,9 +1,7 @@
-from django.urls import path
-from .views import *
+"""
+Urls from Demanda's app
+"""
+
 
 urlpatterns = [
-    path('criar', createDemanda),
-    path('', readDemanda),
-    path('atualizar', updateDemanda),
-    path('demandas', createDemanda),
 ]
