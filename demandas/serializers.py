@@ -5,7 +5,7 @@ from demandas.models import Demanda
 from rest_framework import serializers
 
 
-class DemandaSerializers(serializers.ModelSerializer):
+class DemandaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Demanda
-        fields = ['id', 'tipo', 'descricao', 'detalhes', 'data', 'preco', 'preco_max', 'preco_min', 'clienteCPF', 'prestadroCPF']
+        fields = ['tipo', 'descricao', 'detalhes', 'data','preco_max', 'preco_min', 'clienteCPF']

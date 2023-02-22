@@ -37,8 +37,8 @@ class Demanda(models.Model):
     preco = models.DecimalField(
         max_digits=8,
         decimal_places=2,
-        null=False,
-        blank=False
+        null=True,
+        blank=True
     )
     preco_max = models.DecimalField(
         max_digits=8,
@@ -67,5 +67,3 @@ class Demanda(models.Model):
 
     def __str__(self):
         return self.id
-
-    objetos = models.Manager()

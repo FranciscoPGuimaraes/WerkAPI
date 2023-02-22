@@ -1,6 +1,7 @@
 """
 Views from Cliente's app
 """
+import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,6 +10,7 @@ from clientes.models import Cliente
 
 from clientes.serializers import ClienteSerializer
 from clientes.serializers import LoginSerializer
+from clientes.serializers import EnderecoSerializer
 
 
 @api_view(['GET'])
@@ -58,11 +60,16 @@ def Cliente_Create(request):
     :return: response status201 and the information of Cliente if was successful and status201 and errors if failed
     """
     if request.method == 'POST':
-        cliente = ClienteSerializer(data=request.data)
+        body = json.loads(request.body.decode('utf-8'))
+        cliente = ClienteSerializer(data=body['cliente'])
+        endereco = EnderecoSerializer(data=body['endereco'])
         if cliente.is_valid():
             cliente.save()
-            return Response(cliente.data, status=status.HTTP_201_CREATED)
-        return Response(cliente.errors, status=status.HTTP_400_BAD_REQUEST)
+            if endereco.is_valid():
+                endereco.save()
+                return Response(status=status.HTTP_201_CREATED)
+            return Response({'erro': endereco.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'erro':cliente.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
@@ -72,13 +79,15 @@ def Cliente_Login(request):
         :param request: pattern param
         :return: response status202 and login status if was successful and response status404 and login status if failed
     """
-    login = LoginSerializer(data=request.data)
+    body = json.loads(request.body.decode('utf-8'))
+    login = LoginSerializer(data=body)
     if login.is_valid():
         email = login.data.get('email')
         senha = login.data.get('senha')
-        cliente = Cliente.objects.filter(email=email, senha=senha)
+        cliente = Cliente.objects.get(email=email, senha=senha)
+        serializer = ClienteSerializer(cliente)
         if cliente:
-            return Response(status=status.HTTP_202_ACCEPTED)
+            return Response({'cpf': serializer.data['cpf']}, status=status.HTTP_202_ACCEPTED)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
     else:
