@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from clientes.models import Cliente
+from clientes.models import Endereco
 
 from clientes.serializers import ClienteSerializer
 from clientes.serializers import LoginSerializer
@@ -22,7 +23,9 @@ def ClientesALL(request):
     """
     cliente = Cliente.objects.all()
     clienteSerializer = ClienteSerializer(cliente, many=True)
-    return Response(clienteSerializer.data)
+    endereco = Endereco.objects.all()
+    enderecoSerializer = EnderecoSerializer(endereco, many=True)
+    return Response([clienteSerializer.data, enderecoSerializer.data])
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -40,7 +43,9 @@ def Cliente_RUD(request, pk):
 
     if request.method == 'GET':
         clienteSerializer = ClienteSerializer(cliente)
-        return Response(clienteSerializer.data)
+        endereco = Endereco.objects.get(morador_cliente=pk)
+        enderecoSerializer = EnderecoSerializer(endereco)
+        return Response([clienteSerializer.data, enderecoSerializer.data])
     elif request.method == 'PUT':
         clienteSerializer = ClienteSerializer(cliente, data=request.data)
         if clienteSerializer.is_valid():

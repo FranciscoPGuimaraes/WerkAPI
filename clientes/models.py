@@ -26,7 +26,8 @@ class Cliente(models.Model):
     email = models.EmailField(
         max_length=70,
         null=False,
-        blank=False
+        blank=False,
+        unique=True
     )
     nascimento = models.CharField(
         max_length=16,
@@ -77,8 +78,8 @@ class Endereco(models.Model):
     )
     complemento = models.CharField(
         max_length=30,
-        null=False,
-        blank=False
+        null=True,
+        blank=True
     )
     cep = models.CharField(
         max_length=15,
