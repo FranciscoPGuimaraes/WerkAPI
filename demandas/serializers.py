@@ -8,4 +8,11 @@ from rest_framework import serializers
 class DemandaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Demanda
-        fields = ['tipo', 'descricao', 'detalhes', 'data','preco_max', 'preco_min', 'clienteCPF']
+        fields = ['tipo', 'descricao', 'detalhes', 'data', 'clienteCPF']
+
+
+class ValueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Demanda
+        fields = ['tipo', 'descricao', 'detalhes', 'data', 'clienteCPF', 'preco_max', 'preco_min']
+

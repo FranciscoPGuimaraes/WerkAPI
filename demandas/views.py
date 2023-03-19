@@ -8,6 +8,7 @@ from rest_framework import status
 
 from demandas.models import Demanda
 from demandas.serializers import DemandaSerializer
+from demandas.serializers import ValueSerializer
 
 
 @api_view(['POST'])
@@ -39,9 +40,9 @@ def Demanda_all(request):
 
 
 @api_view(['GET'])
-def Cliente_Read(request, id):
+def Demanda_Read(request, id):
     """
-    This function read, update and delete demanda's objects
+    This function read demanda's objects
     :param request: pattern param
     :param pk: primary key from demanda
     :return: response status and extra information depending on the request type
@@ -56,4 +57,40 @@ def Cliente_Read(request, id):
         return Response(demandaSerializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+def Demanda_ReadByType(request, tipo):
+    """
+    This function read demanda's objects by type
+    :param request: pattern param
+    :param pk: primary key from demanda
+    :return: response status and extra information depending on the request type
+    """
+    demanda = Demanda.objects.filter(tipo=tipo)
+    demandaSerializer = DemandaSerializer(demanda, many=True)
 
+    if demanda:
+        return Response(demandaSerializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+def Demanda_UpdateValue(request):
+    """
+    This function create demanda's objects (register)
+    :param request: pattern param
+    :return: response status201 and the information of Cliente if was successful and status400 and errors if failed
+    """
+    try:
+        body = json.loads(request.body.decode('utf-8'))
+        id = body['id']
+        demanda = Demanda.objects.get(id=id)
+    except Demanda.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'POST':
+        valueSerializer = ValueSerializer(demanda, data=body['valor'])
+        if valueSerializer.is_valid():
+            valueSerializer.update()
+            return Response(valueSerializer.data, status=status.HTTP_200_OK)
+        return Response(valueSerializer.errors, status=status.HTTP_400_BAD_REQUEST)

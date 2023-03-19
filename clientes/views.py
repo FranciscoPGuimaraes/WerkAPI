@@ -40,7 +40,6 @@ def Cliente_RUD(request, pk):
         cliente = Cliente.objects.get(cpf=pk)
     except Cliente.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-
     if request.method == 'GET':
         clienteSerializer = ClienteSerializer(cliente)
         endereco = Endereco.objects.get(morador_cliente=pk)
