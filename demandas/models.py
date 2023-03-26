@@ -43,14 +43,14 @@ class Demanda(models.Model):
     preco_max = models.DecimalField(
         max_digits=8,
         decimal_places=2,
-        null=False,
-        blank=False
+        null=True,
+        blank=True
     )
     preco_min = models.DecimalField(
         max_digits=8,
         decimal_places=2,
-        null=False,
-        blank=False
+        null=True,
+        blank=True
     )
     clienteCPF = models.ForeignKey(
         Cliente,

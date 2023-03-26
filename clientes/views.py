@@ -21,11 +21,14 @@ def ClientesALL(request):
     :param request: pattern param
     :return: information of all clientes
     """
-    cliente = Cliente.objects.all()
-    clienteSerializer = ClienteSerializer(cliente, many=True)
-    endereco = Endereco.objects.all()
-    enderecoSerializer = EnderecoSerializer(endereco, many=True)
-    return Response([clienteSerializer.data, enderecoSerializer.data])
+    try:
+        cliente = Cliente.objects.all()
+        clienteSerializer = ClienteSerializer(cliente, many=True)
+        endereco = Endereco.objects.all()
+        enderecoSerializer = EnderecoSerializer(endereco, many=True)
+        return Response([clienteSerializer.data, enderecoSerializer.data], status=status.HTTP_200_OK)
+    except:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -44,7 +47,7 @@ def Cliente_RUD(request, pk):
         clienteSerializer = ClienteSerializer(cliente)
         endereco = Endereco.objects.get(morador_cliente=pk)
         enderecoSerializer = EnderecoSerializer(endereco)
-        return Response([clienteSerializer.data, enderecoSerializer.data])
+        return Response([clienteSerializer.data, enderecoSerializer.data], status=status.HTTP_200_OK)
     elif request.method == 'PUT':
         clienteSerializer = ClienteSerializer(cliente, data=request.data)
         if clienteSerializer.is_valid():

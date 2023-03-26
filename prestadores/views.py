@@ -11,6 +11,7 @@ from prestadores.models import Prestador
 
 from prestadores.serializers import PrestadorSerializer
 from prestadores.serializers import LoginSerializer
+from clientes.serializers import EnderecoSerializer
 
 
 @api_view(['GET'])
@@ -61,11 +62,15 @@ def Prestador_Create(request):
     """
     if request.method == 'POST':
         body = json.loads(request.body.decode('utf-8'))
-        prestador = PrestadorSerializer(data=body)
+        prestador = PrestadorSerializer(data=body['prestador'])
+        endereco = EnderecoSerializer(data=body['endereco'])
         if prestador.is_valid():
             prestador.save()
-            return Response(prestador.data, status=status.HTTP_201_CREATED)
-        return Response(prestador.errors, status=status.HTTP_400_BAD_REQUEST)
+            if endereco.is_valid():
+                endereco.save()
+                return Response(status=status.HTTP_201_CREATED)
+            return Response({'erro': endereco.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'erro':prestador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

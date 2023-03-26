@@ -8,7 +8,6 @@ from rest_framework import status
 
 from demandas.models import Demanda
 from demandas.serializers import DemandaSerializer
-from demandas.serializers import ValueSerializer
 
 
 @api_view(['POST'])
@@ -77,20 +76,14 @@ def Demanda_ReadByType(request, tipo):
 @api_view(['POST'])
 def Demanda_UpdateValue(request):
     """
-    This function create demanda's objects (register)
+    This function update preco_max demanda's objects (register)
     :param request: pattern param
     :return: response status201 and the information of Cliente if was successful and status400 and errors if failed
     """
     try:
         body = json.loads(request.body.decode('utf-8'))
         id = body['id']
-        demanda = Demanda.objects.get(id=id)
+        demanda = Demanda.objects.filter(id=id).update(preco_max=body['value'])
     except Demanda.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'POST':
-        valueSerializer = ValueSerializer(demanda, data=body['valor'])
-        if valueSerializer.is_valid():
-            valueSerializer.update()
-            return Response(valueSerializer.data, status=status.HTTP_200_OK)
-        return Response(valueSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(status=status.HTTP_200_OK)
