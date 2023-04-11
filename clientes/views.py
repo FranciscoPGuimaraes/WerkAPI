@@ -31,10 +31,32 @@ def ClientesALL(request):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def Cliente_RUD(request, pk):
+@api_view(['POST'])
+def Cliente_Update(request):
     """
-    This function read, update and delete cliente's objects
+    This function update cliente's objects
+    :param request: pattern param
+    :return: response status200 if was successful and status404 if not found
+    """
+    try:
+        body = json.loads(request.body.decode('utf-8'))
+        id = body['id']
+        atribute = body['atribute']
+        value = body['value']
+        cliente = Cliente.objects.filter(id=id)
+    except Cliente.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    clienteSerializer = ClienteSerializer(cliente)
+    clienteSerializer[atribute] = value
+    clienteSerializer.save()
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET', 'DELETE'])
+def Cliente_RD(request, pk):
+    """
+    This function read and delete cliente's objects
     :param request: pattern param
     :param pk: primary key from Cliente
     :return: response status and extra information depending on the request type
@@ -48,12 +70,6 @@ def Cliente_RUD(request, pk):
         endereco = Endereco.objects.get(morador_cliente=pk)
         enderecoSerializer = EnderecoSerializer(endereco)
         return Response([clienteSerializer.data, enderecoSerializer.data], status=status.HTTP_200_OK)
-    elif request.method == 'PUT':
-        clienteSerializer = ClienteSerializer(cliente, data=request.data)
-        if clienteSerializer.is_valid():
-            clienteSerializer.update()
-            return Response(clienteSerializer.data, status=status.HTTP_200_OK)
-        return Response(clienteSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         cliente.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -91,7 +107,7 @@ def Cliente_Login(request):
     if login.is_valid():
         email = login.data.get('email')
         senha = login.data.get('senha')
-        cliente = Cliente.objects.get(email=email, senha=senha)
+        cliente = Cliente.objects.filter(email=email, senha=senha)
         serializer = ClienteSerializer(cliente)
         if cliente:
             return Response({'cpf': serializer.data['cpf']}, status=status.HTTP_202_ACCEPTED)
