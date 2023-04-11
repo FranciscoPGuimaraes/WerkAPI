@@ -27,7 +27,7 @@ class Cliente(models.Model):
         max_length=70,
         null=False,
         blank=False,
-        unique=True
+        #unique=True
     )
     nascimento = models.CharField(
         max_length=16,

@@ -107,7 +107,7 @@ def Cliente_Login(request):
     if login.is_valid():
         email = login.data.get('email')
         senha = login.data.get('senha')
-        cliente = Cliente.objects.filter(email=email, senha=senha)
+        cliente = Cliente.objects.get(email=email, senha=senha)
         serializer = ClienteSerializer(cliente)
         if cliente:
             return Response({'cpf': serializer.data['cpf']}, status=status.HTTP_202_ACCEPTED)
