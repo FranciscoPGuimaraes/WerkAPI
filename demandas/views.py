@@ -76,7 +76,7 @@ def Demanda_ReadByType(request, tipo):
 @api_view(['POST'])
 def Demanda_UpdateValue(request):
     """
-    This function update preco_max demanda's objects (register)
+    This function update preco_max demanda's objects
     :param request: pattern param
     :return: response status201 and the information of Cliente if was successful and status400 and errors if failed
     """
