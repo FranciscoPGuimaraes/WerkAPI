@@ -26,10 +26,32 @@ def PrestadorALL(request):
     return Response(prestadorserializer.data)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def Prestador_RUD(request, pk):
+@api_view(['POST'])
+def Prestador_Update(request):
     """
-    This function read, update and delete prestador's objects
+    This function update prestador's objects
+    :param request: pattern param
+    :return: response status200 if was successful and status404 if not found
+    """
+    try:
+        body = json.loads(request.body.decode('utf-8'))
+        id = body['id']
+        atribute = body['atribute']
+        value = body['value']
+        prestador = Prestador.objects.filter(id=id)
+    except Prestador.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    prestadorSerializer = PrestadorSerializer(prestador)
+    prestadorSerializer[atribute] = value
+    prestadorSerializer.save()
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET', 'DELETE'])
+def Prestador_RD(request, pk):
+    """
+    This function read and delete prestador's objects
     :param request: pattern param
     :param pk: primary key from Cliente
     :return: response status and extra information depending on the request type
@@ -42,12 +64,6 @@ def Prestador_RUD(request, pk):
     if request.method == 'GET':
         Serializer = PrestadorSerializer(prestador)
         return Response(Serializer.data)
-    elif request.method == 'PUT':
-        Serializer = PrestadorSerializer(prestador, data=request.data)
-        if Serializer.is_valid():
-            Serializer.update()
-            return Response(Serializer.data, status=status.HTTP_200_OK)
-        return Response(Serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         prestador.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
