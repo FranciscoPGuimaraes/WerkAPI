@@ -12,6 +12,7 @@ from prestadores.models import Prestador
 from prestadores.serializers import PrestadorSerializer
 from prestadores.serializers import LoginSerializer
 from clientes.serializers import EnderecoSerializer
+from prestadores.serializers import UpdateSerializer
 
 
 @api_view(['GET'])
@@ -35,16 +36,16 @@ def Prestador_Update(request):
     """
     try:
         body = json.loads(request.body.decode('utf-8'))
-        id = body['id']
-        atribute = body['atribute']
-        value = body['value']
-        prestador = Prestador.objects.filter(id=id)
+        serializer = UpdateSerializer(data=body["prestador"])
+        cpf = body["cpf"]
+        prestador = Prestador.objects.filter(cpf=cpf)
+        if serializer.is_valid():
+            prestador.update(nome=serializer.data["nome"], telefone=serializer.data["telefone"],
+                             email=serializer.data["email"], nascimento=serializer.data["nascimento"])
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
     except Prestador.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
-    prestadorSerializer = PrestadorSerializer(prestador)
-    prestadorSerializer[atribute] = value
-    prestadorSerializer.save()
     return Response(status=status.HTTP_200_OK)
 
 
@@ -86,7 +87,7 @@ def Prestador_Create(request):
                 endereco.save()
                 return Response(status=status.HTTP_201_CREATED)
             return Response({'erro': endereco.errors}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'erro':prestador.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'erro': prestador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

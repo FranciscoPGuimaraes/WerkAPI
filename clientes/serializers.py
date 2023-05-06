@@ -8,8 +8,13 @@ from rest_framework import serializers
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
-        #fields = ['senha','nome', 'cpf', 'telefone', 'email', 'nascimento']
-        fields = ['nome', 'cpf', 'telefone', 'email', 'nascimento']
+        fields = ['senha', 'nome', 'cpf', 'telefone', 'email', 'nascimento']
+
+
+class UpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cliente
+        fields = ['nome', 'telefone', 'email', 'nascimento']
 
 
 class EnderecoSerializer(serializers.ModelSerializer):

@@ -7,7 +7,7 @@ from prestadores.views import *
 urlpatterns = [
     path('login', Prestador_Login),
     path('cadastro', Prestador_Create),
-    path('<str:pk>', Prestador_RD),
     path('update', Prestador_Update),
     path('', PrestadorALL),
+    path('<str:pk>', Prestador_RD),
 ]

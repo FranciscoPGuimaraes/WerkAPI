@@ -6,12 +6,15 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
+from django.contrib.auth.hashers import make_password
+
 from clientes.models import Cliente
 from clientes.models import Endereco
 
 from clientes.serializers import ClienteSerializer
 from clientes.serializers import LoginSerializer
 from clientes.serializers import EnderecoSerializer
+from clientes.serializers import UpdateSerializer
 
 
 @api_view(['GET'])
@@ -40,16 +43,16 @@ def Cliente_Update(request):
     """
     try:
         body = json.loads(request.body.decode('utf-8'))
-        id = body['id']
-        atribute = body['atribute']
-        value = body['value']
-        cliente = Cliente.objects.filter(id=id)
+        serializer = UpdateSerializer(data=body["cliente"])
+        cpf = body["cpf"]
+        cliente = Cliente.objects.filter(cpf=cpf)
+        if serializer.is_valid():
+            cliente.update(nome=serializer.data["nome"], telefone=serializer.data["telefone"],
+                           email=serializer.data["email"], nascimento=serializer.data["nascimento"])
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
     except Cliente.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
-    clienteSerializer = ClienteSerializer(cliente)
-    clienteSerializer[atribute] = value
-    clienteSerializer.save()
     return Response(status=status.HTTP_200_OK)
 
 
@@ -86,13 +89,18 @@ def Cliente_Create(request):
         body = json.loads(request.body.decode('utf-8'))
         cliente = ClienteSerializer(data=body['cliente'])
         endereco = EnderecoSerializer(data=body['endereco'])
-        if cliente.is_valid():
-            cliente.save()
-            if endereco.is_valid():
-                endereco.save()
-                return Response(status=status.HTTP_201_CREATED)
-            return Response({'erro': endereco.errors}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'erro':cliente.errors}, status=status.HTTP_400_BAD_REQUEST)
+        email = body["cliente"]["email"]
+        emailExist = Cliente.objects.filter(email=email)
+        if not emailExist:
+            if cliente.is_valid():
+                cliente.validated_data["senha"] = make_password(cliente.validated_data["senha"])
+                cliente.save()
+                if endereco.is_valid():
+                    endereco.save()
+                    return Response(status=status.HTTP_201_CREATED)
+                return Response({'erro': endereco.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'erro': cliente.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'erro': "Email já existente"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

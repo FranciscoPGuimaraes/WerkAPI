@@ -83,7 +83,7 @@ def Demanda_UpdateValue(request):
     try:
         body = json.loads(request.body.decode('utf-8'))
         id = body['id']
-        demanda = Demanda.objects.filter(id=id).update(preco_max=body['value'])
+        Demanda.objects.filter(id=id).update(preco_max=body['value'])
     except Demanda.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     return Response(status=status.HTTP_200_OK)

@@ -26,8 +26,7 @@ class Cliente(models.Model):
     email = models.EmailField(
         max_length=70,
         null=False,
-        blank=False,
-        #unique=True
+        blank=False
     )
     nascimento = models.CharField(
         max_length=16,
