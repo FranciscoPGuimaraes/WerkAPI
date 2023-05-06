@@ -7,6 +7,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import check_password
+
 from prestadores.models import Prestador
 
 from prestadores.serializers import PrestadorSerializer
@@ -81,13 +84,18 @@ def Prestador_Create(request):
         body = json.loads(request.body.decode('utf-8'))
         prestador = PrestadorSerializer(data=body['prestador'])
         endereco = EnderecoSerializer(data=body['endereco'])
-        if prestador.is_valid():
-            prestador.save()
-            if endereco.is_valid():
-                endereco.save()
-                return Response(status=status.HTTP_201_CREATED)
-            return Response({'erro': endereco.errors}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'erro': prestador.errors}, status=status.HTTP_400_BAD_REQUEST)
+        email = body["prestador"]["email"]
+        emailExist = Prestador.objects.filter(email=email)
+        if not emailExist:
+            if prestador.is_valid():
+                prestador.validated_data["senha"] = make_password(prestador.validated_data["senha"])
+                prestador.save()
+                if endereco.is_valid():
+                    endereco.save()
+                    return Response(status=status.HTTP_201_CREATED)
+                return Response({'erro': endereco.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'erro': prestador.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'erro': "Email já existente"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
@@ -102,10 +110,13 @@ def Prestador_Login(request):
     if login.is_valid():
         email = login.data.get('email')
         senha = login.data.get('senha')
-        prestador = Prestador.objects.get(email=email, senha=senha)
+        prestador = Prestador.objects.get(email=email)
         serializer = PrestadorSerializer(prestador)
         if prestador:
-            return Response({'cpf': serializer.data['cpf']}, status=status.HTTP_202_ACCEPTED)
+            if check_password(senha, serializer.data["senha"]):
+                return Response({'cpf': serializer.data['cpf']}, status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response(status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
     else:

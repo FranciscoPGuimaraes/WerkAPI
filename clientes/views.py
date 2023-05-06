@@ -6,8 +6,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from django.contrib.auth.hashers import make_password, check_password
-
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import check_password
 
 from clientes.models import Cliente
 from clientes.models import Endereco
