@@ -6,7 +6,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
+
 
 from clientes.models import Cliente
 from clientes.models import Endereco
@@ -115,10 +116,14 @@ def Cliente_Login(request):
     if login.is_valid():
         email = login.data.get('email')
         senha = login.data.get('senha')
-        cliente = Cliente.objects.get(email=email, senha=senha)
+        cliente = Cliente.objects.get(email=email)
         serializer = ClienteSerializer(cliente)
+
         if cliente:
-            return Response({'cpf': serializer.data['cpf']}, status=status.HTTP_202_ACCEPTED)
+            if check_password(senha, serializer.data["senha"]):
+                return Response({'cpf': serializer.data['cpf']}, status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response(status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
     else:
