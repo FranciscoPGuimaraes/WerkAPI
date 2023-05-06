@@ -23,7 +23,7 @@ def Demanda_Create(request):
         if demanda.is_valid():
             demanda.save()
             return Response(status=status.HTTP_201_CREATED)
-        return Response({'erro':demanda.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'erro': demanda.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -74,7 +74,7 @@ def Demanda_ReadByType(request, tipo):
 
 
 @api_view(['POST'])
-def Demanda_UpdateValue(request):
+def Demanda_UpdateValuePrestador(request):
     """
     This function update preco_max demanda's objects
     :param request: pattern param
@@ -83,7 +83,41 @@ def Demanda_UpdateValue(request):
     try:
         body = json.loads(request.body.decode('utf-8'))
         id = body['id']
-        Demanda.objects.filter(id=id).update(preco_max=body['value'])
+        Demanda.objects.filter(id=id).update(preco_max=body['value'], update=1)
+    except Demanda.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def Demanda_UpdateValueCliente(request):
+    """
+    This function update preco_max demanda's objects
+    :param request: pattern param
+    :return: response status201 and the information of Cliente if was successful and status400 and errors if failed
+    """
+    try:
+        body = json.loads(request.body.decode('utf-8'))
+        id = body['id']
+        Demanda.objects.filter(id=id).update(preco_min=body['value'], update=0)
+    except Demanda.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def Demanda_SetValue(request):
+    """
+    This function update preco_max demanda's objects
+    :param request: pattern param
+    :return: response status201 and the information of Cliente if was successful and status400 and errors if failed
+    """
+    try:
+        body = json.loads(request.body.decode('utf-8'))
+        id = body['id']
+        demanda = Demanda.objects.filter(id=id)
+        print(demanda)
+        demanda.update(preco_min=body['value'])
     except Demanda.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     return Response(status=status.HTTP_200_OK)

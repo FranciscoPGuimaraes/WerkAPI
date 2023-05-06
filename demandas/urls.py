@@ -7,7 +7,9 @@ from .views import *
 urlpatterns = [
     path('', Demanda_all),
     path('create', Demanda_Create),
-    path('atualizar', Demanda_UpdateValue),
+    path('atualizarPrestador', Demanda_UpdateValuePrestador),
+    path('atualizarCliente', Demanda_UpdateValueCliente),
+    path('setValor', Demanda_SetValue),
     path('infos/<str:id>', Demanda_Read),
     path('tipo/<str:tipo>', Demanda_ReadByType),
 ]

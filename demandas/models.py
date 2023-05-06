@@ -34,20 +34,26 @@ class Demanda(models.Model):
         null=False,
         blank=False
     )
+    update = models.DecimalField(
+        max_digits=2,
+        decimal_places=0,
+        null=True,
+        blank=True
+    )
     preco = models.DecimalField(
-        max_digits=8,
+        max_digits=16,
         decimal_places=2,
         null=True,
         blank=True
     )
     preco_max = models.DecimalField(
-        max_digits=8,
+        max_digits=16,
         decimal_places=2,
         null=True,
         blank=True
     )
     preco_min = models.DecimalField(
-        max_digits=8,
+        max_digits=16,
         decimal_places=2,
         null=True,
         blank=True

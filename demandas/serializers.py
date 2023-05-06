@@ -8,4 +8,4 @@ from rest_framework import serializers
 class DemandaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Demanda
-        fields = ['tipo', 'descricao', 'detalhes', 'data', 'clienteCPF', 'preco_max', 'preco_max']
+        fields = ['tipo', 'descricao', 'detalhes', 'data', 'clienteCPF', 'preco_max', 'preco_min', 'preco', 'update']
