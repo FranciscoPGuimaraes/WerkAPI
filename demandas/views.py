@@ -41,7 +41,7 @@ def Demanda_all(request):
 @api_view(['GET'])
 def Demanda_Read(request, id):
     """
-    This function read demanda's objects
+    This function read demanda's objects by id
     :param request: pattern param
     :param pk: primary key from demanda
     :return: response status and extra information depending on the request type
@@ -92,7 +92,7 @@ def Demanda_UpdateValuePrestador(request):
 @api_view(['POST'])
 def Demanda_UpdateValueCliente(request):
     """
-    This function update preco_max demanda's objects
+    This function update preco_min demanda's objects
     :param request: pattern param
     :return: response status201 and the information of Cliente if was successful and status400 and errors if failed
     """
@@ -108,16 +108,24 @@ def Demanda_UpdateValueCliente(request):
 @api_view(['POST'])
 def Demanda_SetValue(request):
     """
-    This function update preco_max demanda's objects
+    This function set preco of demanda's objects
     :param request: pattern param
     :return: response status201 and the information of Cliente if was successful and status400 and errors if failed
     """
     try:
         body = json.loads(request.body.decode('utf-8'))
         id = body['id']
-        demanda = Demanda.objects.filter(id=id)
-        print(demanda)
-        demanda.update(preco_min=body['value'])
+        demanda = Demanda.objects.get(id=id)
+        demandaSerializer = DemandaSerializer(demanda)
+        print(demandaSerializer.data["update"])
+        if int(demandaSerializer.data["update"]) == 1:
+            print(1)
+            preco = demandaSerializer.data["preco_max"]
+            Demanda.objects.filter(id=id).update(preco=preco)
+        elif int(demandaSerializer.data["update"]) == 0:
+            print(0)
+            preco = demandaSerializer.data["preco_min"]
+            Demanda.objects.filter(id=id).update(preco=preco)
     except Demanda.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    return Response(status=status.HTTP_200_OK)
+    return Response(demandaSerializer.data, status=status.HTTP_200_OK)
