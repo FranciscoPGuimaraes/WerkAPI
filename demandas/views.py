@@ -119,7 +119,6 @@ def Demanda_SetValue(request):
         demandaSerializer = DemandaSerializer(demanda)
         print(demandaSerializer.data["update"])
         if int(demandaSerializer.data["update"]) == 1:
-            print(1)
             preco = demandaSerializer.data["preco_max"]
             Demanda.objects.filter(id=id).update(preco=preco)
         elif int(demandaSerializer.data["update"]) == 0:
