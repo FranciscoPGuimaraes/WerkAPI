@@ -11,5 +11,6 @@ urlpatterns = [
     path('atualizarCliente', Demanda_UpdateValueCliente),
     path('setValor', Demanda_SetValue),
     path('infos/<str:id>', Demanda_Read),
+    path('cliente/<str:cpf>', Demanda_Cliente),
     path('tipo/<str:tipo>', Demanda_ReadByType),
 ]

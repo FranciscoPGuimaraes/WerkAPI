@@ -39,6 +39,25 @@ def Demanda_all(request):
 
 
 @api_view(['GET'])
+def Demanda_Cliente(request, cpf):
+    """
+    This function read demandas of one cliente
+    :param request: pattern param
+    :param cpf: primary key from demanda
+    :return: information of all demandas
+    """
+    try:
+        demanda = Demanda.objects.filter(clienteCPF=cpf)
+    except Demanda.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        print("ok")
+        demandaSerializer = DemandaSerializer(demanda, many=True)
+        return Response(demandaSerializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
 def Demanda_Read(request, id):
     """
     This function read demanda's objects by id
