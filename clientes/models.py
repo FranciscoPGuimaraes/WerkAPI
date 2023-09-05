@@ -38,6 +38,11 @@ class Cliente(models.Model):
         null=False,
         blank=False
     )
+    foto = models.CharField(
+        max_length=50000,
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return self.nome

@@ -17,6 +17,12 @@ class UpdateSerializer(serializers.ModelSerializer):
         fields = ['nome', 'telefone', 'email', 'nascimento']
 
 
+class FotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cliente
+        fields = ['foto']
+
+
 class EnderecoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Endereco

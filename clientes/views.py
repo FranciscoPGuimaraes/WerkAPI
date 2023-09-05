@@ -16,6 +16,7 @@ from clientes.serializers import ClienteSerializer
 from clientes.serializers import LoginSerializer
 from clientes.serializers import EnderecoSerializer
 from clientes.serializers import UpdateSerializer
+from clientes.serializers import FotoSerializer
 
 
 @api_view(['GET'])
@@ -103,6 +104,36 @@ def Cliente_Create(request):
             return Response({'erro': cliente.errors}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'erro': "Email já existente"}, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['POST'])
+def Cliente_Foto(request):
+    """
+    This function updates the 'foto' field of a cliente object
+    :param request: pattern param
+    :return: response status 201 and the information of Cliente if successful,
+             or status 400 and errors if failed
+    """
+    try:
+        if request.method == 'POST':
+            body = json.loads(request.body.decode('utf-8'))
+            serializer = FotoSerializer(data=body)  # Use 'data=body' diretamente
+
+            if serializer.is_valid():
+                cpf = body.get('cpf')
+                cliente = Cliente.objects.filter(cpf=cpf).first()  # Use 'first()' para obter um único cliente
+
+                if cliente:
+                    cliente.foto = serializer.validated_data.get('foto')
+                    cliente.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+                return Response({'error': 'Cliente não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 def Cliente_Login(request):

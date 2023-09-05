@@ -136,14 +136,12 @@ def Demanda_SetValue(request):
         id = body['id']
         demanda = Demanda.objects.get(id=id)
         demandaSerializer = DemandaSerializer(demanda)
-        print(demandaSerializer.data["update"])
         if int(demandaSerializer.data["update"]) == 1:
             preco = demandaSerializer.data["preco_max"]
-            Demanda.objects.filter(id=id).update(preco=preco)
+            Demanda.objects.filter(id=id).update(preco=preco, preco_min=preco)
         elif int(demandaSerializer.data["update"]) == 0:
-            print(0)
             preco = demandaSerializer.data["preco_min"]
-            Demanda.objects.filter(id=id).update(preco=preco)
+            Demanda.objects.filter(id=id).update(preco=preco, preco_max=preco)
     except Demanda.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     return Response(demandaSerializer.data, status=status.HTTP_200_OK)

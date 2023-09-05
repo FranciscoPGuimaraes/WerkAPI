@@ -8,6 +8,7 @@ urlpatterns = [
     path('login', Cliente_Login),
     path('cadastro', Cliente_Create),
     path('update', Cliente_Update),
+    path('foto', Cliente_Foto),
     path('', ClientesALL),
     path('<str:pk>', Cliente_RD),
 ]
