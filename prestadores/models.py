@@ -42,7 +42,7 @@ class Prestador(models.Model):
         null=False,
         blank=False
     )
-    cadastroValidado = models.BooleanField()
+    #cadastroValidado = models.BooleanField()
 
     def __str__(self):
         return self.nome
