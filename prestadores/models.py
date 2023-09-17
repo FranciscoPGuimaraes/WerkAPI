@@ -42,8 +42,22 @@ class Prestador(models.Model):
         null=False,
         blank=False
     )
-    #cadastroValidado = models.BooleanField()
+
+    # cadastroValidado = models.BooleanField()
 
     def __str__(self):
         return self.nome
 
+
+class Especialidade(models.Model):
+    id = models.IntegerField(
+        primary_key=True,
+        null=False,
+        blank=False,
+        auto_created=True
+    )
+    nome = models.CharField(
+        max_length=90,
+        null=False,
+        blank=False
+    )

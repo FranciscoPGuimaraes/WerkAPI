@@ -43,7 +43,7 @@ def Demanda_Cliente(request, cpf):
     """
     This function read demandas of one cliente
     :param request: pattern param
-    :param cpf: primary key from demanda
+    :param cpf: foreing key from cliente
     :return: information of all demandas
     """
     try:
@@ -52,9 +52,27 @@ def Demanda_Cliente(request, cpf):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
-        print("ok")
         demandaSerializer = DemandaSerializer(demanda, many=True)
         return Response(demandaSerializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def Demanda_Prestador(request, cpf):
+    """
+    This function read demandas of one prestador
+    :param request: pattern param
+    :param cpf: foreing key from prestador
+    :return: information of all demandas
+    """
+    try:
+        demanda = Demanda.objects.filter(prestadorCPF=cpf)
+    except Demanda.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        demandaSerializer = DemandaSerializer(demanda, many=True)
+        demandasOrdenadas = sorted(demandaSerializer.data, key=lambda x: int(x['status']))
+        return Response(demandasOrdenadas, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -145,3 +163,37 @@ def Demanda_SetValue(request):
     except Demanda.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     return Response(demandaSerializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def Demanda_SetPrestador(request):
+    """
+    This function set a foreing key of prestador
+    :param request: pattern param
+    :return: response status201 and the information of Cliente if was successful and status400 and errors if failed
+    """
+    try:
+        body = json.loads(request.body.decode('utf-8'))
+        id = body['id']
+        cpf = body['cpf']
+        Demanda.objects.filter(id=id).update(prestadroCPF=cpf)
+        return Response(status=status.HTTP_200_OK)
+    except Exception as err:
+        return Response({"Error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def Demanda_UpdateStatus(request):
+    """
+    This function update status
+    :param request: pattern param
+    :param id: primary key of Demanda
+    :return: response status201 and the information of Cliente if was successful and status400 and errors if failed
+    """
+    try:
+        body = json.loads(request.body.decode('utf-8'))
+        id = body['id']
+        value = body['status']
+        Demanda.objects.filter(id=id).update(status=value)
+        return Response(status=status.HTTP_200_OK)
+    except Exception as err:
+        return Response({"Error": str(err)}, status=status.HTTP_400_BAD_REQUEST)

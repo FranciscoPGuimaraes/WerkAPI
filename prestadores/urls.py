@@ -10,4 +10,6 @@ urlpatterns = [
     path('update', Prestador_Update),
     path('', PrestadorALL),
     path('<str:pk>', Prestador_RD),
+    path('especialidades', Especialidade_read),
+    path('especialidades/cadastro', Especialidade_read),
 ]

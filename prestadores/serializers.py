@@ -11,6 +11,12 @@ class PrestadorSerializer(serializers.ModelSerializer):
         fields = ['cpf', 'nome', 'telefone', 'email', 'nascimento', 'senha', 'especialidade']
 
 
+class EspecialidadeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prestador
+        fields = ['id', 'nome']
+
+
 class UpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prestador

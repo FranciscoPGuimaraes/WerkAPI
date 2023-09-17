@@ -40,6 +40,12 @@ class Demanda(models.Model):
         null=True,
         blank=True
     )
+    status = models.DecimalField(
+        max_digits=2,
+        decimal_places=0,
+        null=False,
+        blank=False
+    )
     preco = models.DecimalField(
         max_digits=16,
         decimal_places=2,
@@ -64,7 +70,7 @@ class Demanda(models.Model):
         null=True,
         blank=True
     )
-    prestadroCPF = models.ForeignKey(
+    prestadorCPF = models.ForeignKey(
         Prestador,
         on_delete=models.CASCADE,
         null=True,

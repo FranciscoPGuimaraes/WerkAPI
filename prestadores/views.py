@@ -11,11 +11,13 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 
 from prestadores.models import Prestador
+from prestadores.models import Especialidade
 
 from prestadores.serializers import PrestadorSerializer
 from prestadores.serializers import LoginSerializer
 from clientes.serializers import EnderecoSerializer
 from prestadores.serializers import UpdateSerializer
+from prestadores.serializers import EspecialidadeSerializer
 
 
 @api_view(['GET'])
@@ -120,4 +122,30 @@ def Prestador_Login(request):
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
     else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def Especialidade_Create(request):
+    try:
+        body = json.loads(request.body.decode('utf-8'))
+        serializer = EspecialidadeSerializer(data=body["especialidade"])
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def Especialidade_read(request):
+    try:
+        especialidades = Especialidade.objects.all()
+        serializer = EspecialidadeSerializer(data=especialidades, many=True)
+        if serializer:
+            return Response(serializer, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    except:
         return Response(status=status.HTTP_400_BAD_REQUEST)
