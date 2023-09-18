@@ -8,7 +8,7 @@ from rest_framework import status
 
 from demandas.models import Demanda
 from demandas.serializers import DemandaSerializer
-
+from demandas.serializers import DemandaSerializerID
 
 @api_view(['POST'])
 def Demanda_Create(request):
@@ -34,7 +34,7 @@ def Demanda_all(request):
     :return: information of all demandas
     """
     demanda = Demanda.objects.all()
-    demandaSerializer = DemandaSerializer(demanda, many=True)
+    demandaSerializer = DemandaSerializerID(demanda, many=True)
     return Response(demandaSerializer.data)
 
 
@@ -52,7 +52,7 @@ def Demanda_Cliente(request, cpf):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
-        demandaSerializer = DemandaSerializer(demanda, many=True)
+        demandaSerializer = DemandaSerializerID(demanda, many=True)
         return Response(demandaSerializer.data, status=status.HTTP_200_OK)
 
 
@@ -70,7 +70,7 @@ def Demanda_Prestador(request, cpf):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
-        demandaSerializer = DemandaSerializer(demanda, many=True)
+        demandaSerializer = DemandaSerializerID(demanda, many=True)
         demandasOrdenadas = sorted(demandaSerializer.data, key=lambda x: int(x['status']))
         return Response(demandasOrdenadas, status=status.HTTP_200_OK)
 
@@ -89,7 +89,7 @@ def Demanda_Read(request, id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
-        demandaSerializer = DemandaSerializer(demanda)
+        demandaSerializer = DemandaSerializerID(demanda)
         return Response(demandaSerializer.data, status=status.HTTP_200_OK)
 
 
@@ -102,7 +102,7 @@ def Demanda_ReadByType(request, tipo):
     :return: response status and extra information depending on the request type
     """
     demanda = Demanda.objects.filter(tipo=tipo)
-    demandaSerializer = DemandaSerializer(demanda, many=True)
+    demandaSerializer = DemandaSerializerID(demanda, many=True)
 
     if demanda:
         return Response(demandaSerializer.data, status=status.HTTP_200_OK)
@@ -156,10 +156,10 @@ def Demanda_SetValue(request):
         demandaSerializer = DemandaSerializer(demanda)
         if int(demandaSerializer.data["update"]) == 1:
             preco = demandaSerializer.data["preco_max"]
-            Demanda.objects.filter(id=id).update(preco=preco, preco_min=preco)
+            Demanda.objects.filter(id=id).update(preco=preco, preco_min=preco, status=2)
         elif int(demandaSerializer.data["update"]) == 0:
             preco = demandaSerializer.data["preco_min"]
-            Demanda.objects.filter(id=id).update(preco=preco, preco_max=preco)
+            Demanda.objects.filter(id=id).update(preco=preco, preco_max=preco, status=2)
     except Demanda.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     return Response(demandaSerializer.data, status=status.HTTP_200_OK)
