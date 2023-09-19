@@ -120,7 +120,7 @@ def Demanda_UpdateValuePrestador(request):
     try:
         body = json.loads(request.body.decode('utf-8'))
         id = body['id']
-        Demanda.objects.filter(id=id).update(preco_max=body['value'], update=1)
+        Demanda.objects.filter(id=id).update(preco_max=body['value'], update=0)
     except Demanda.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     return Response(status=status.HTTP_200_OK)
@@ -136,7 +136,7 @@ def Demanda_UpdateValueCliente(request):
     try:
         body = json.loads(request.body.decode('utf-8'))
         id = body['id']
-        Demanda.objects.filter(id=id).update(preco_min=body['value'], update=0)
+        Demanda.objects.filter(id=id).update(preco_min=body['value'], update=1)
     except Demanda.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     return Response(status=status.HTTP_200_OK)
@@ -154,10 +154,10 @@ def Demanda_SetValue(request):
         id = body['id']
         demanda = Demanda.objects.get(id=id)
         demandaSerializer = DemandaSerializer(demanda)
-        if int(demandaSerializer.data["update"]) == 1:
+        if int(demandaSerializer.data["update"]) == 0:
             preco = demandaSerializer.data["preco_max"]
             Demanda.objects.filter(id=id).update(preco=preco, preco_min=preco, status=2)
-        elif int(demandaSerializer.data["update"]) == 0:
+        elif int(demandaSerializer.data["update"]) == 1:
             preco = demandaSerializer.data["preco_min"]
             Demanda.objects.filter(id=id).update(preco=preco, preco_max=preco, status=2)
     except Demanda.DoesNotExist:
