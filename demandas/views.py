@@ -176,10 +176,11 @@ def Demanda_SetPrestador(request):
         body = json.loads(request.body.decode('utf-8'))
         id = body['id']
         cpf = body['cpf']
-        Demanda.objects.filter(id=id).update(prestadroCPF=cpf)
+        Demanda.objects.filter(id=id).update(prestadorCPF=cpf)
         return Response(status=status.HTTP_200_OK)
     except Exception as err:
         return Response({"Error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 def Demanda_UpdateStatus(request):
