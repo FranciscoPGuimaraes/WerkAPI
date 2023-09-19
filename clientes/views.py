@@ -87,22 +87,27 @@ def Cliente_Create(request):
     :param request: pattern param
     :return: response status201 and the information of Cliente if was successful and status201 and errors if failed
     """
-    if request.method == 'POST':
-        body = json.loads(request.body.decode('utf-8'))
-        cliente = ClienteSerializer(data=body['cliente'])
-        endereco = EnderecoSerializer(data=body['endereco'])
-        email = body["cliente"]["email"]
-        emailExist = Cliente.objects.filter(email=email)
-        if not emailExist:
-            if cliente.is_valid():
-                cliente.validated_data["senha"] = make_password(cliente.validated_data["senha"])
-                cliente.save()
-                if endereco.is_valid():
-                    endereco.save()
-                    return Response(status=status.HTTP_201_CREATED)
-                return Response({'erro': endereco.errors}, status=status.HTTP_400_BAD_REQUEST)
-            return Response({'erro': cliente.errors}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'erro': "Email já existente"}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        if request.method == 'POST':
+            body = json.loads(request.body.decode('utf-8'))
+            cliente = ClienteSerializer(data=body['cliente'])
+            endereco = body['endereco']
+            endereco['morador_cliente'] = body['cliente']['cpf']
+            serializer = EnderecoSerializer(data=body['endereco'])
+            email = body["cliente"]["email"]
+            emailExist = Cliente.objects.filter(email=email)
+            if not emailExist:
+                if cliente.is_valid():
+                    cliente.validated_data["senha"] = make_password(cliente.validated_data["senha"])
+                    cliente.save()
+                    if serializer.is_valid():
+                        serializer.save()
+                        return Response(status=status.HTTP_201_CREATED)
+                    return Response({'erro': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'erro': cliente.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'erro': "Email já existente"}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as error:
+        return Response({"Error": str(error)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
